@@ -1,0 +1,1570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>AI Quest - The Ultimate Challenge</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    :root {
+      --gold: #FFD700;
+      --gold-dark: #B8860B;
+      --green: #10b981;
+      --red: #ef4444;
+      --bg-dark: #08080c;
+      --bg-card: rgba(255,255,255,0.03);
+      --border: rgba(255,255,255,0.08);
+      --text: #ffffff;
+      --text-dim: #6b7280;
+    }
+    
+    html, body {
+      height: 100%;
+      overflow-x: hidden;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      min-height: 100vh;
+      -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Animated Background */
+    .bg-effects {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+    }
+    
+    .glow-orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(100px);
+      opacity: 0.4;
+    }
+    
+    .glow-orb.gold {
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(255,215,0,0.3) 0%, transparent 70%);
+      top: -200px;
+      right: -100px;
+      animation: float 20s ease-in-out infinite;
+    }
+    
+    .glow-orb.purple {
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, rgba(139,92,246,0.25) 0%, transparent 70%);
+      bottom: -150px;
+      left: -100px;
+      animation: float 25s ease-in-out infinite reverse;
+    }
+    
+    .glow-orb.cyan {
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(6,182,212,0.2) 0%, transparent 70%);
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      animation: pulse 10s ease-in-out infinite;
+    }
+    
+    @keyframes float {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(30px, -30px); }
+    }
+    
+    @keyframes pulse {
+      0%, 100% { opacity: 0.2; transform: translate(-50%, -50%) scale(1); }
+      50% { opacity: 0.35; transform: translate(-50%, -50%) scale(1.1); }
+    }
+    
+    .grid-overlay {
+      position: absolute;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(255,215,0,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,215,0,0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse at center, black 0%, transparent 70%);
+    }
+    
+    /* Layout */
+    .screen { 
+      display: none; 
+      min-height: 100vh; 
+      padding: 40px; 
+      position: relative;
+      z-index: 1;
+    }
+    .screen.active { 
+      display: flex; 
+      flex-direction: column; 
+      align-items: center; 
+    }
+    
+    /* Cards */
+    .glass-card {
+      background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      backdrop-filter: blur(10px);
+    }
+    
+    /* Buttons */
+    .btn {
+      padding: 16px 32px;
+      font-family: inherit;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .btn-gold {
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      color: #000;
+      box-shadow: 0 4px 25px rgba(255,215,0,0.3), inset 0 1px 0 rgba(255,255,255,0.3);
+    }
+    
+    .btn-gold:hover, .btn-gold:active {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 40px rgba(255,215,0,0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+    }
+    
+    .btn-gold::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s;
+    }
+    
+    .btn-gold:hover::after {
+      transform: translateX(100%);
+    }
+    
+    .btn-secondary {
+      background: rgba(255,255,255,0.06);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+    
+    .btn-secondary:hover, .btn-secondary:active {
+      background: rgba(255,255,255,0.1);
+      border-color: rgba(255,215,0,0.3);
+    }
+
+    /* ===== INTRO ===== */
+    .intro-content { text-align: center; padding-top: 80px; }
+    
+    .logo-container {
+      position: relative;
+      width: 160px;
+      height: 160px;
+      margin: 0 auto 40px;
+    }
+    
+    .logo-ring {
+      position: absolute;
+      inset: 0;
+      border: 2px solid rgba(255,215,0,0.3);
+      border-radius: 50%;
+      animation: ringPulse 3s ease-in-out infinite;
+    }
+    
+    .logo-ring:nth-child(2) {
+      inset: -15px;
+      border-color: rgba(139,92,246,0.2);
+      animation-delay: -1s;
+    }
+    
+    .logo-ring:nth-child(3) {
+      inset: -30px;
+      border-color: rgba(6,182,212,0.15);
+      animation-delay: -2s;
+    }
+    
+    @keyframes ringPulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.05); opacity: 0.5; }
+    }
+    
+    .logo-icon {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 70px;
+      filter: drop-shadow(0 0 30px rgba(255,215,0,0.5));
+    }
+    
+    .title {
+      font-size: clamp(3rem, 8vw, 5rem);
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      margin-bottom: 12px;
+    }
+    
+    .title-ai {
+      background: linear-gradient(135deg, #fff 0%, #888 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .title-quest {
+      background: linear-gradient(135deg, var(--gold) 0%, #FFA500 50%, var(--gold-dark) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 2px 10px rgba(255,215,0,0.3));
+    }
+    
+    .tagline {
+      color: var(--text-dim);
+      font-size: 1rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      margin-bottom: 50px;
+    }
+    
+    .stats-row {
+      display: flex;
+      gap: 20px;
+      justify-content: center;
+      margin-bottom: 50px;
+    }
+    
+    .stat-card {
+      padding: 24px 36px;
+      text-align: center;
+    }
+    
+    .stat-value {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--gold) 0%, #FFA500 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-top: 4px;
+    }
+
+    /* ===== QUESTION ===== */
+    .q-header {
+      width: 100%;
+      max-width: 1000px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      margin-bottom: 30px;
+      margin-top: 20px;
+    }
+    
+    .q-progress { flex: 1; }
+    
+    .q-count {
+      font-size: 1.1rem;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+    
+    .q-count .current {
+      font-size: 1.8rem;
+      font-weight: 800;
+      color: var(--gold);
+    }
+    
+    .q-count .total {
+      color: var(--text-dim);
+    }
+    
+    .progress-track {
+      height: 8px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 100px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--gold) 0%, #FFA500 100%);
+      border-radius: 100px;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 0 20px rgba(255,215,0,0.5);
+    }
+    
+    .category-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 22px;
+      background: linear-gradient(135deg, rgba(255,215,0,0.15) 0%, rgba(255,215,0,0.05) 100%);
+      border: 1px solid rgba(255,215,0,0.25);
+      border-radius: 100px;
+      color: var(--gold);
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+    
+    .question-card {
+      width: 100%;
+      max-width: 1000px;
+      padding: 50px 60px;
+      text-align: center;
+      position: relative;
+      margin-bottom: 30px;
+    }
+    
+    .q-number {
+      position: absolute;
+      top: -18px;
+      left: 50%;
+      transform: translateX(-50%);
+      padding: 10px 28px;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      border-radius: 100px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #000;
+      box-shadow: 0 4px 20px rgba(255,215,0,0.3);
+    }
+    
+    .question-text {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 600;
+      line-height: 1.4;
+    }
+    
+    .options-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+      width: 100%;
+      max-width: 1000px;
+      margin-bottom: 30px;
+    }
+    
+    .option-card {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 20px 24px;
+      transition: all 0.3s;
+    }
+    
+    .option-card:hover, .option-card:active {
+      border-color: rgba(255,215,0,0.3);
+      transform: translateX(5px);
+    }
+    
+    .option-letter {
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, var(--gold) 0%, var(--gold-dark) 100%);
+      border-radius: 12px;
+      font-weight: 700;
+      color: #000;
+      flex-shrink: 0;
+      box-shadow: 0 2px 10px rgba(255,215,0,0.2);
+    }
+    
+    .option-text {
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    
+    .actions-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .btn-options {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .btn-hint {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+      font-weight: 400;
+    }
+    
+    .scoring-info {
+      display: flex;
+      gap: 40px;
+      padding: 16px 28px;
+      font-size: 0.9rem;
+      color: var(--text-dim);
+    }
+    
+    .scoring-info strong {
+      color: var(--gold);
+      font-weight: 700;
+    }
+
+    /* ===== REVEAL + AWARD ===== */
+    .reveal-content {
+      width: 100%;
+      max-width: 1100px;
+      padding-top: 30px;
+    }
+    
+    .answer-showcase {
+      display: flex;
+      align-items: center;
+      gap: 40px;
+      padding: 40px;
+      margin-bottom: 40px;
+      background: linear-gradient(135deg, rgba(16,185,129,0.08) 0%, rgba(16,185,129,0.02) 100%);
+      border: 1px solid rgba(16,185,129,0.2);
+    }
+    
+    .answer-image {
+      width: 200px;
+      height: 200px;
+      border-radius: 20px;
+      overflow: hidden;
+      flex-shrink: 0;
+      border: 3px solid rgba(16,185,129,0.3);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+      background: linear-gradient(135deg, rgba(255,215,0,0.2), rgba(139,92,246,0.2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .answer-image .fallback-icon {
+      font-size: 5rem;
+      opacity: 0.8;
+    }
+    
+    .answer-details { flex: 1; }
+    
+    .answer-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 18px;
+      background: rgba(16,185,129,0.2);
+      border: 1px solid rgba(16,185,129,0.3);
+      border-radius: 100px;
+      color: var(--green);
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+    }
+    
+    .answer-badge::before {
+      content: '✓';
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      background: var(--green);
+      border-radius: 50%;
+      color: white;
+      font-size: 0.7rem;
+    }
+    
+    .answer-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 12px;
+    }
+    
+    .answer-desc {
+      font-size: 1.1rem;
+      color: #9ca3af;
+      line-height: 1.6;
+    }
+    
+    .assign-section {
+      text-align: center;
+    }
+    
+    .assign-title {
+      font-size: 1.4rem;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: #e5e7eb;
+    }
+    
+    .assign-subtitle {
+      font-size: 0.95rem;
+      color: var(--text-dim);
+      margin-bottom: 30px;
+    }
+    
+    /* Desktop Teams Grid with Hover */
+    .teams-grid {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+    
+    .team-card {
+      position: relative;
+      width: 130px;
+      padding: 24px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+      text-align: center;
+      background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+      border: 1px solid var(--border);
+    }
+    
+    .team-card:hover {
+      transform: translateY(-12px) scale(1.05);
+      border-color: var(--gold);
+      box-shadow: 
+        0 20px 50px rgba(255,215,0,0.2),
+        0 0 0 1px rgba(255,215,0,0.3),
+        inset 0 1px 0 rgba(255,255,255,0.1);
+    }
+    
+    .team-card.selected {
+      border-color: var(--gold);
+      box-shadow: 0 0 30px rgba(255,215,0,0.4);
+      transform: scale(1.05);
+    }
+    
+    .team-icon {
+      font-size: 2.8rem;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+      transition: transform 0.3s;
+    }
+    
+    .team-card:hover .team-icon {
+      transform: scale(1.15);
+    }
+    
+    .team-name {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      transition: color 0.3s;
+    }
+    
+    .team-card:hover .team-name, .team-card.selected .team-name {
+      color: var(--gold);
+    }
+    
+    .team-score {
+      font-size: 0.85rem;
+      color: var(--text-dim);
+    }
+    
+    /* Desktop Hover Overlay */
+    .team-hover {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(0,0,0,0.95) 0%, rgba(20,20,30,0.95) 100%);
+      border-radius: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 16px;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+    }
+    
+    .team-card:hover .team-hover {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .hover-team-name {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 6px;
+    }
+    
+    .hover-btn {
+      width: 100%;
+      padding: 12px 16px;
+      border: none;
+      border-radius: 12px;
+      font-family: inherit;
+      font-weight: 700;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    
+    .hover-btn:hover, .hover-btn:active {
+      transform: scale(1.05);
+    }
+    
+    .hover-btn.correct {
+      background: linear-gradient(135deg, var(--green) 0%, #059669 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(16,185,129,0.4);
+    }
+    
+    .hover-btn.wrong {
+      background: linear-gradient(135deg, var(--red) 0%, #dc2626 100%);
+      color: white;
+      box-shadow: 0 4px 15px rgba(239,68,68,0.4);
+    }
+    
+    /* Mobile Action Panel - Shows after selecting team */
+    .mobile-action-panel {
+      display: none;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto 20px;
+      padding: 20px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0.02) 100%);
+      border: 2px solid rgba(255,215,0,0.3);
+      text-align: center;
+    }
+    
+    .mobile-action-panel.show {
+      display: block;
+      animation: slideUp 0.3s ease;
+    }
+    
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .selected-team-info {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+    
+    .selected-team-icon {
+      font-size: 3rem;
+    }
+    
+    .selected-team-name {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--gold);
+    }
+    
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+    }
+    
+    .action-btn {
+      flex: 1;
+      padding: 18px 20px;
+      border: none;
+      border-radius: 16px;
+      font-family: inherit;
+      font-weight: 800;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .action-btn:active {
+      transform: scale(0.95);
+    }
+    
+    .action-btn.correct {
+      background: linear-gradient(135deg, var(--green) 0%, #059669 100%);
+      color: white;
+      box-shadow: 0 6px 25px rgba(16,185,129,0.5);
+    }
+    
+    .action-btn.wrong {
+      background: linear-gradient(135deg, var(--red) 0%, #dc2626 100%);
+      color: white;
+      box-shadow: 0 6px 25px rgba(239,68,68,0.5);
+    }
+    
+    .action-btn .pts {
+      font-size: 1.5rem;
+    }
+    
+    .action-btn .label {
+      font-size: 0.8rem;
+      opacity: 0.9;
+    }
+    
+    .skip-btn {
+      background: transparent;
+      color: #4b5563;
+      border: 1px solid rgba(255,255,255,0.1);
+      padding: 12px 24px;
+      font-size: 0.9rem;
+    }
+    
+    .skip-btn:hover, .skip-btn:active {
+      color: #9ca3af;
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    /* ===== MODAL ===== */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.3s;
+      backdrop-filter: blur(10px);
+      padding: 20px;
+    }
+    
+    .modal-overlay.show {
+      opacity: 1;
+      visibility: visible;
+    }
+    
+    .modal {
+      background: linear-gradient(135deg, #1a1a2e 0%, #0f0f18 100%);
+      border: 1px solid rgba(255,215,0,0.2);
+      border-radius: 28px;
+      padding: 36px;
+      max-width: 480px;
+      width: 100%;
+      transform: scale(0.9);
+      transition: transform 0.3s;
+      box-shadow: 0 25px 80px rgba(0,0,0,0.5);
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+    
+    .modal-overlay.show .modal {
+      transform: scale(1);
+    }
+    
+    .modal-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+    
+    .modal-teams {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    
+    .modal-team {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+    }
+    
+    .modal-team.top {
+      background: linear-gradient(135deg, rgba(255,215,0,0.1) 0%, rgba(255,215,0,0.03) 100%);
+      border-color: rgba(255,215,0,0.25);
+    }
+    
+    .modal-rank { font-size: 1.3rem; width: 32px; }
+    .modal-icon { font-size: 1.5rem; }
+    .modal-name { flex: 1; font-weight: 600; }
+    .modal-pts { color: var(--gold); font-weight: 700; font-size: 1.1rem; }
+
+    /* ===== TOAST ===== */
+    .toast {
+      position: fixed;
+      top: 40px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-120px);
+      background: linear-gradient(135deg, rgba(20,20,30,0.98) 0%, rgba(10,10,15,0.98) 100%);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 20px 36px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      z-index: 2000;
+      opacity: 0;
+      transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      backdrop-filter: blur(20px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+    
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+    
+    .toast-icon { font-size: 2.5rem; }
+    .toast-text { font-weight: 600; font-size: 1.15rem; }
+    .toast-pts { font-size: 1.6rem; font-weight: 800; }
+    .toast-pts.pos { color: var(--green); }
+    .toast-pts.neg { color: var(--red); }
+    .toast-pts.zero { color: var(--text-dim); }
+
+    /* ===== CONFETTI ===== */
+    .confetti-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 100;
+      overflow: hidden;
+    }
+    
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      opacity: 0;
+    }
+    
+    .confetti.active {
+      animation: confetti-fall linear forwards;
+    }
+    
+    @keyframes confetti-fall {
+      0% {
+        opacity: 1;
+        transform: translateY(-100px) rotate(0deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(100vh) rotate(720deg);
+      }
+    }
+
+    /* ===== WINNER ===== */
+    .winner-content {
+      text-align: center;
+      padding-top: 50px;
+    }
+    
+    .trophy-container {
+      position: relative;
+      margin-bottom: 20px;
+    }
+    
+    .trophy-glow {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 200px;
+      height: 200px;
+      background: radial-gradient(circle, rgba(255,215,0,0.4) 0%, transparent 70%);
+      transform: translate(-50%, -50%);
+      animation: trophyGlow 2s ease-in-out infinite;
+    }
+    
+    @keyframes trophyGlow {
+      0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 0.4; }
+      50% { transform: translate(-50%, -50%) scale(1.2); opacity: 0.6; }
+    }
+    
+    .trophy-icon {
+      font-size: 7rem;
+      position: relative;
+      filter: drop-shadow(0 0 30px rgba(255,215,0,0.5));
+      animation: trophyBounce 1.5s ease-in-out infinite;
+    }
+    
+    @keyframes trophyBounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+    
+    .winner-label {
+      font-size: 1rem;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 8px;
+    }
+    
+    .champion-title {
+      font-size: clamp(2.5rem, 6vw, 4rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, var(--gold) 0%, #FFA500 50%, var(--gold-dark) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 40px;
+      letter-spacing: 0.05em;
+    }
+    
+    .winner-showcase {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 50px 80px;
+      border-radius: 32px;
+      margin-bottom: 50px;
+      box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+    }
+    
+    .winner-icon { font-size: 5.5rem; margin-bottom: 16px; }
+    .winner-name { font-size: 2.5rem; font-weight: 800; color: #000; }
+    .winner-score { font-size: 1.3rem; color: rgba(0,0,0,0.6); margin-top: 6px; }
+    
+    .final-title {
+      font-size: 1.2rem;
+      color: #9ca3af;
+      margin-bottom: 24px;
+    }
+    
+    .final-leaderboard {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 500px;
+      width: 100%;
+      margin-bottom: 40px;
+    }
+    
+    .final-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 24px;
+      border-radius: 16px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+    }
+    
+    .final-row.gold {
+      background: linear-gradient(135deg, rgba(255,215,0,0.15) 0%, rgba(255,215,0,0.05) 100%);
+      border-color: rgba(255,215,0,0.3);
+    }
+    .final-row.silver {
+      background: linear-gradient(135deg, rgba(192,192,192,0.1) 0%, rgba(192,192,192,0.03) 100%);
+      border-color: rgba(192,192,192,0.2);
+    }
+    .final-row.bronze {
+      background: linear-gradient(135deg, rgba(205,127,50,0.1) 0%, rgba(205,127,50,0.03) 100%);
+      border-color: rgba(205,127,50,0.2);
+    }
+    
+    .final-rank { font-size: 1.5rem; width: 40px; }
+    .final-icon { font-size: 1.8rem; }
+    .final-name { flex: 1; font-weight: 600; font-size: 1.1rem; text-align: left; }
+    .final-score { color: var(--gold); font-weight: 700; font-size: 1.2rem; }
+
+    /* ===== MOBILE RESPONSIVE ===== */
+    @media (max-width: 768px) {
+      .screen { padding: 20px; }
+      
+      /* Hide desktop hover overlay on mobile */
+      .team-hover { display: none !important; }
+      
+      /* Show mobile action panel */
+      .mobile-action-panel { display: none; }
+      .mobile-action-panel.show { display: block; }
+      
+      /* Intro */
+      .intro-content { padding-top: 40px; }
+      .logo-container { width: 120px; height: 120px; margin-bottom: 30px; }
+      .logo-icon { font-size: 50px; }
+      .logo-ring:nth-child(2) { inset: -10px; }
+      .logo-ring:nth-child(3) { inset: -20px; }
+      .title { font-size: 2.5rem; }
+      .tagline { font-size: 0.7rem; letter-spacing: 0.2em; margin-bottom: 30px; }
+      .stats-row { flex-direction: row; gap: 10px; flex-wrap: wrap; justify-content: center; }
+      .stat-card { padding: 16px 20px; min-width: 90px; }
+      .stat-value { font-size: 1.8rem; }
+      .stat-label { font-size: 0.7rem; }
+      
+      /* Question */
+      .q-header { gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+      .q-count .current { font-size: 1.4rem; }
+      .category-badge { padding: 8px 16px; font-size: 0.8rem; }
+      .question-card { padding: 30px 20px; margin-bottom: 20px; }
+      .q-number { padding: 8px 20px; font-size: 0.8rem; top: -14px; }
+      .question-text { font-size: 1.2rem; }
+      .options-grid { grid-template-columns: 1fr; gap: 10px; margin-bottom: 20px; }
+      .option-card { padding: 14px 16px; gap: 12px; }
+      .option-letter { width: 36px; height: 36px; font-size: 0.9rem; }
+      .option-text { font-size: 0.95rem; }
+      .actions-row { flex-direction: column; gap: 12px; width: 100%; max-width: 400px; }
+      .actions-row .btn { width: 100%; }
+      .scoring-info { flex-direction: column; gap: 8px; text-align: center; padding: 14px 20px; font-size: 0.8rem; }
+      
+      /* Reveal */
+      .reveal-content { padding-top: 15px; }
+      .answer-showcase { flex-direction: column; text-align: center; padding: 20px; gap: 16px; margin-bottom: 20px; }
+      .answer-image { width: 100px; height: 100px; }
+      .answer-image .fallback-icon { font-size: 3rem; }
+      .answer-title { font-size: 1.3rem; }
+      .answer-desc { font-size: 0.85rem; }
+      .answer-badge { padding: 6px 14px; font-size: 0.75rem; margin-bottom: 10px; }
+      .assign-title { font-size: 1rem; }
+      .assign-subtitle { font-size: 0.75rem; margin-bottom: 12px; }
+      
+      /* Mobile team grid - simple selection */
+      .teams-grid { 
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        width: 100%;
+        margin-bottom: 16px;
+      }
+      .team-card { 
+        width: 100%; 
+        padding: 10px 6px; 
+        border-radius: 12px;
+      }
+      .team-icon { font-size: 1.6rem; margin-bottom: 2px; }
+      .team-name { font-size: 0.65rem; }
+      .team-score { font-size: 0.6rem; }
+      
+      .skip-btn { padding: 10px 20px; font-size: 0.8rem; }
+      
+      /* Modal */
+      .modal { padding: 24px; border-radius: 20px; }
+      .modal-title { font-size: 1.2rem; margin-bottom: 16px; }
+      .modal-team { padding: 12px 14px; gap: 10px; }
+      .modal-rank { font-size: 1.1rem; width: 28px; }
+      .modal-icon { font-size: 1.2rem; }
+      .modal-name { font-size: 0.9rem; }
+      .modal-pts { font-size: 1rem; }
+      
+      /* Toast */
+      .toast { padding: 14px 24px; gap: 12px; top: 20px; }
+      .toast-icon { font-size: 2rem; }
+      .toast-text { font-size: 1rem; }
+      .toast-pts { font-size: 1.3rem; }
+      
+      /* Winner */
+      .winner-content { padding-top: 30px; }
+      .trophy-icon { font-size: 5rem; }
+      .trophy-glow { width: 150px; height: 150px; }
+      .winner-label { font-size: 0.8rem; }
+      .champion-title { font-size: 2rem; margin-bottom: 24px; }
+      .winner-showcase { padding: 30px 50px; margin-bottom: 30px; }
+      .winner-icon { font-size: 4rem; margin-bottom: 10px; }
+      .winner-name { font-size: 1.8rem; }
+      .winner-score { font-size: 1rem; }
+      .final-title { font-size: 1rem; margin-bottom: 16px; }
+      .final-row { padding: 12px 16px; gap: 12px; }
+      .final-rank { font-size: 1.2rem; width: 32px; }
+      .final-icon { font-size: 1.4rem; }
+      .final-name { font-size: 0.95rem; }
+      .final-score { font-size: 1rem; }
+      
+      /* Background */
+      .glow-orb.gold { width: 300px; height: 300px; }
+      .glow-orb.purple { width: 250px; height: 250px; }
+      .glow-orb.cyan { width: 200px; height: 200px; }
+    }
+    
+    @media (max-width: 400px) {
+      .teams-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+      .team-card { padding: 8px 4px; }
+      .team-icon { font-size: 1.4rem; }
+      .stats-row { gap: 8px; }
+      .stat-card { padding: 14px 16px; min-width: 80px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Background Effects -->
+  <div class="bg-effects">
+    <div class="glow-orb gold"></div>
+    <div class="glow-orb purple"></div>
+    <div class="glow-orb cyan"></div>
+    <div class="grid-overlay"></div>
+  </div>
+
+  <!-- Confetti Container -->
+  <div class="confetti-container" id="confettiContainer"></div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <span class="toast-icon" id="toastIcon"></span>
+    <span class="toast-text" id="toastText"></span>
+    <span class="toast-pts" id="toastPts"></span>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+      <h2 class="modal-title">📊 Current Standings</h2>
+      <div class="modal-teams" id="modalTeams"></div>
+      <button class="btn btn-gold" style="width:100%" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
+  <!-- INTRO -->
+  <div id="intro" class="screen active">
+    <div class="intro-content">
+      <div class="logo-container">
+        <div class="logo-ring"></div>
+        <div class="logo-ring"></div>
+        <div class="logo-ring"></div>
+        <div class="logo-icon">🧠</div>
+      </div>
+      <h1 class="title">
+        <span class="title-ai">AI</span>
+        <span class="title-quest">QUEST</span>
+      </h1>
+      <p class="tagline">The Ultimate Knowledge Challenge</p>
+      <div class="stats-row">
+        <div class="stat-card glass-card">
+          <div class="stat-value">21</div>
+          <div class="stat-label">Questions</div>
+        </div>
+        <div class="stat-card glass-card">
+          <div class="stat-value">7</div>
+          <div class="stat-label">Teams</div>
+        </div>
+        <div class="stat-card glass-card">
+          <div class="stat-value">∞</div>
+          <div class="stat-label">Glory</div>
+        </div>
+      </div>
+      <button class="btn btn-gold" onclick="startGame()">Begin Challenge →</button>
+    </div>
+  </div>
+
+  <!-- QUESTION -->
+  <div id="question" class="screen">
+    <div class="q-header">
+      <div class="q-progress">
+        <div class="q-count">
+          <span class="current" id="qNum">1</span>
+          <span class="total">/ 21</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressBar"></div>
+        </div>
+      </div>
+      <button class="btn btn-secondary" onclick="openModal()">📊 Leaderboard</button>
+    </div>
+    
+    <div class="category-badge" id="category">💡 Category</div>
+    
+    <div class="question-card glass-card">
+      <div class="q-number" id="qBadge">Q1</div>
+      <h2 class="question-text" id="qText"></h2>
+    </div>
+    
+    <div class="options-grid" id="optionsGrid" style="display:none;"></div>
+    
+    <div class="actions-row">
+      <button class="btn btn-secondary btn-options" onclick="toggleOptions()">
+        <span id="optBtn">👁️ Show Options</span>
+        <span class="btn-hint" id="optHint">(reduces to +1/-1)</span>
+      </button>
+      <button class="btn btn-gold" onclick="showScreen('reveal')">Reveal Answer →</button>
+    </div>
+    
+    <div class="scoring-info glass-card">
+      <div>✨ Without options: <strong>+2</strong> correct / <strong>0</strong> wrong</div>
+      <div>💡 With options: <strong>+1</strong> correct / <strong>-1</strong> wrong</div>
+    </div>
+  </div>
+
+  <!-- REVEAL + AWARD -->
+  <div id="reveal" class="screen">
+    <div class="reveal-content">
+      <div class="answer-showcase glass-card">
+        <div class="answer-image" id="ansImageContainer">
+          <span class="fallback-icon" id="fallbackIcon">🤖</span>
+        </div>
+        <div class="answer-details">
+          <div class="answer-badge">Correct Answer</div>
+          <h2 class="answer-title" id="ansTitle"></h2>
+          <p class="answer-desc" id="ansDesc"></p>
+        </div>
+      </div>
+      
+      <div class="assign-section">
+        <h3 class="assign-title">Which team answered?</h3>
+        <p class="assign-subtitle">Tap a team, then tap ✓ or ✗</p>
+        
+        <div class="teams-grid" id="teamsGrid"></div>
+        
+        <!-- Mobile Action Panel - BIG BUTTONS -->
+        <div class="mobile-action-panel" id="mobileActionPanel">
+          <div class="selected-team-info">
+            <span class="selected-team-icon" id="selectedTeamIcon"></span>
+            <span class="selected-team-name" id="selectedTeamName"></span>
+          </div>
+          <div class="action-buttons">
+            <button class="action-btn correct" onclick="awardSelected(true)">
+              <span class="pts" id="correctPtsBtn">+2</span>
+              <span class="label">Correct ✓</span>
+            </button>
+            <button class="action-btn wrong" onclick="awardSelected(false)">
+              <span class="pts" id="wrongPtsBtn">0</span>
+              <span class="label">Wrong ✗</span>
+            </button>
+          </div>
+        </div>
+        
+        <button class="btn skip-btn" onclick="skip()">Skip → No team answered</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- WINNER -->
+  <div id="winner" class="screen">
+    <div class="winner-content">
+      <div class="trophy-container">
+        <div class="trophy-glow"></div>
+        <div class="trophy-icon">🏆</div>
+      </div>
+      <p class="winner-label">And the winner is...</p>
+      <h1 class="champion-title">CHAMPION</h1>
+      <div class="winner-showcase" id="winnerCard">
+        <div class="winner-icon" id="winIcon"></div>
+        <div class="winner-name" id="winName"></div>
+        <div class="winner-score" id="winScore"></div>
+      </div>
+      <h3 class="final-title">🏆 Final Leaderboard</h3>
+      <div class="final-leaderboard" id="finalLeaderboard"></div>
+      <button class="btn btn-gold" onclick="restart()">🔄 Play Again</button>
+    </div>
+  </div>
+
+  <script>
+    const teams = [
+      { id: 0, name: 'Alpha', score: 0, icon: '🦁', bg: 'linear-gradient(135deg, #FFD700 0%, #FFA500 100%)' },
+      { id: 1, name: 'Beta', score: 0, icon: '🐺', bg: 'linear-gradient(135deg, #9B59B6 0%, #8E44AD 100%)' },
+      { id: 2, name: 'Gamma', score: 0, icon: '🦅', bg: 'linear-gradient(135deg, #3498DB 0%, #2980B9 100%)' },
+      { id: 3, name: 'Delta', score: 0, icon: '🐉', bg: 'linear-gradient(135deg, #E74C3C 0%, #C0392B 100%)' },
+      { id: 4, name: 'Epsilon', score: 0, icon: '🦊', bg: 'linear-gradient(135deg, #1ABC9C 0%, #16A085 100%)' },
+      { id: 5, name: 'Zeta', score: 0, icon: '🐯', bg: 'linear-gradient(135deg, #F39C12 0%, #D68910 100%)' },
+      { id: 6, name: 'Omega', score: 0, icon: '🦈', bg: 'linear-gradient(135deg, #E91E63 0%, #AD1457 100%)' }
+    ];
+
+    const questions = [
+      { cat: 'AI Pioneers', q: 'Who is known as the "Godmother of AI"?', opts: ['Fei-Fei Li', 'Daphne Koller', 'Cynthia Breazeal', 'Yoshua Bengio'], ans: 'Fei-Fei Li', icon: '👩‍🔬', desc: 'Dr. Fei-Fei Li is a Professor at Stanford and Creator of ImageNet.' },
+      { cat: 'AI Models', q: 'What does "GPT" stand for in ChatGPT?', opts: ['Generative Pre-trained Transformer', 'General Purpose Technology', 'Graphical Processing Tool', 'Generated Pattern Text'], ans: 'Generative Pre-trained Transformer', icon: '🤖', desc: 'GPT = Generative Pre-trained Transformer by OpenAI.' },
+      { cat: 'AI Companies', q: 'Which company created the AI assistant "Claude"?', opts: ['Anthropic', 'OpenAI', 'Google', 'Meta'], ans: 'Anthropic', icon: '🅰️', desc: 'Anthropic focuses on AI safety research.' },
+      { cat: 'AI History', q: 'Who is considered the "Father of AI"?', opts: ['John McCarthy', 'Alan Turing', 'Marvin Minsky', 'Claude Shannon'], ans: 'John McCarthy', icon: '👨‍💻', desc: 'John McCarthy coined "AI" at Dartmouth in 1956.' },
+      { cat: 'AI Chatbots', q: "What is Google's AI chatbot called?", opts: ['Gemini', 'Bard', 'Grok', 'Copilot'], ans: 'Gemini', icon: '♊', desc: 'Gemini is Google\'s most capable AI model.' },
+      { cat: 'AI Gaming', q: 'Which AI defeated the world Go champion?', opts: ['AlphaGo', 'Deep Blue', 'Watson', 'GPT-4'], ans: 'AlphaGo', icon: '⚫', desc: 'AlphaGo defeated Lee Sedol in 2016.' },
+      { cat: 'AI Terms', q: 'What does "LLM" stand for?', opts: ['Large Language Model', 'Linear Learning Machine', 'Logic Learning Module', 'Language Logic Method'], ans: 'Large Language Model', icon: '📚', desc: 'LLM = Large Language Model.' },
+      { cat: 'AI Founders', q: 'Who co-founded OpenAI with Sam Altman?', opts: ['Elon Musk', 'Bill Gates', 'Mark Zuckerberg', 'Jeff Bezos'], ans: 'Elon Musk', icon: '🚀', desc: 'Elon Musk co-founded OpenAI in 2015.' },
+      { cat: 'AI Problems', q: 'What is it called when AI generates false info?', opts: ['Hallucination', 'Confabulation', 'Fabrication', 'Imagination'], ans: 'Hallucination', icon: '🌀', desc: 'AI Hallucination = generating false but plausible info.' },
+      { cat: 'AI Art', q: 'Which company made DALL-E?', opts: ['OpenAI', 'Google', 'Microsoft', 'Adobe'], ans: 'OpenAI', icon: '🎨', desc: 'OpenAI created DALL-E for text-to-image generation.' },
+      { cat: 'AI Testing', q: 'What does the Turing Test evaluate?', opts: ['Machine intelligence', 'Processing speed', 'Memory capacity', 'Power efficiency'], ans: 'Machine intelligence', icon: '🧪', desc: 'Alan Turing proposed this test in 1950.' },
+      { cat: 'AI Terms', q: 'What does "NLP" stand for?', opts: ['Natural Language Processing', 'Neural Learning Protocol', 'Network Logic Program', 'Numeric Logic Processing'], ans: 'Natural Language Processing', icon: '💬', desc: 'NLP = Natural Language Processing.' },
+      { cat: 'AI Pioneers', q: 'Who is a "Godfather of Deep Learning"?', opts: ['Geoffrey Hinton', 'Steve Jobs', 'Larry Page', 'Tim Cook'], ans: 'Geoffrey Hinton', icon: '🧠', desc: 'Geoffrey Hinton won Nobel Prize in Physics 2024.' },
+      { cat: 'Open Source', q: "What is Meta's open-source LLM called?", opts: ['LLaMA', 'Falcon', 'Claude', 'PaLM'], ans: 'LLaMA', icon: '🦙', desc: 'LLaMA = Large Language Model Meta AI.' },
+      { cat: 'AI Tech', q: 'What generates AI images from text?', opts: ['Diffusion Models', 'Blockchain', 'Quantum Computing', 'Edge Computing'], ans: 'Diffusion Models', icon: '🖼️', desc: 'Diffusion Models power Stable Diffusion, DALL-E, Midjourney.' },
+      { cat: 'AI Companies', q: 'Who created Stable Diffusion?', opts: ['Stability AI', 'OpenAI', 'Google', 'Microsoft'], ans: 'Stability AI', icon: '⚡', desc: 'Stability AI made the open-source Stable Diffusion.' },
+      { cat: 'AI Concepts', q: 'What does "AGI" stand for?', opts: ['Artificial General Intelligence', 'Advanced Graphics Interface', 'Automated Global Integration', 'Applied Genetic Intelligence'], ans: 'Artificial General Intelligence', icon: '🌐', desc: 'AGI = human-level AI across all domains.' },
+      { cat: 'AI Training', q: 'What is RLHF?', opts: ['Reinforcement Learning from Human Feedback', 'Recursive Logic for Hybrid Functions', 'Random Layer Hidden Features', 'Rapid Learning Heuristic Framework'], ans: 'Reinforcement Learning from Human Feedback', icon: '👍', desc: 'RLHF aligns AI with human preferences.' },
+      { cat: 'AI Science', q: 'Which AI solved protein folding?', opts: ['AlphaFold', 'AlphaGo', 'AlphaStar', 'AlphaZero'], ans: 'AlphaFold', icon: '🧬', desc: 'AlphaFold by DeepMind revolutionized biology.' },
+      { cat: 'AI Chatbots', q: "What is xAI's chatbot called?", opts: ['Grok', 'Gemini', 'Claude', 'Copilot'], ans: 'Grok', icon: '✖️', desc: 'Grok is xAI\'s witty AI assistant.' },
+      { cat: 'AI History', q: 'When was "AI" first coined?', opts: ['1956', '1969', '1984', '2001'], ans: '1956', icon: '📅', desc: 'The term was coined at Dartmouth Conference in 1956.' }
+    ];
+
+    let currentQ = 0;
+    let optionsShown = false;
+    let optionsUsed = false;
+    let selectedTeamId = null;
+
+    const $ = id => document.getElementById(id);
+    const getLetter = i => String.fromCharCode(65 + i);
+    const getRank = i => ['🥇','🥈','🥉','4️⃣','5️⃣','6️⃣','7️⃣'][i] || '';
+    const getSorted = () => [...teams].sort((a,b) => b.score - a.score);
+    const isMobile = () => window.innerWidth <= 768;
+
+    function showScreen(id) {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      $(id).classList.add('active');
+      if (id === 'question') updateQuestion();
+      if (id === 'reveal') updateReveal();
+      if (id === 'winner') updateWinner();
+    }
+
+    function startGame() {
+      teams.forEach(t => t.score = 0);
+      currentQ = 0;
+      optionsShown = false;
+      optionsUsed = false;
+      showScreen('question');
+    }
+
+    function updateQuestion() {
+      const q = questions[currentQ];
+      $('qNum').textContent = currentQ + 1;
+      $('progressBar').style.width = ((currentQ + 1) / questions.length * 100) + '%';
+      $('category').innerHTML = '💡 ' + q.cat;
+      $('qBadge').textContent = 'Q' + (currentQ + 1);
+      $('qText').textContent = q.q;
+      $('optionsGrid').style.display = 'none';
+      $('optBtn').textContent = '👁️ Show Options';
+      $('optHint').textContent = '(reduces to +1/-1)';
+      optionsShown = false;
+    }
+
+    function toggleOptions() {
+      optionsShown = !optionsShown;
+      const q = questions[currentQ];
+      const grid = $('optionsGrid');
+      
+      if (optionsShown) {
+        optionsUsed = true;
+        grid.innerHTML = q.opts.map((opt, i) => `
+          <div class="option-card glass-card">
+            <span class="option-letter">${getLetter(i)}</span>
+            <span class="option-text">${opt}</span>
+          </div>
+        `).join('');
+        grid.style.display = 'grid';
+        $('optBtn').textContent = '🙈 Hide Options';
+        $('optHint').textContent = '(+2/0 without)';
+      } else {
+        grid.style.display = 'none';
+        $('optBtn').textContent = '👁️ Show Options';
+        $('optHint').textContent = '(reduces to +1/-1)';
+      }
+    }
+
+    function updateReveal() {
+      const q = questions[currentQ];
+      
+      $('fallbackIcon').textContent = q.icon;
+      $('ansTitle').textContent = q.ans;
+      $('ansDesc').textContent = q.desc;
+      
+      selectedTeamId = null;
+      $('mobileActionPanel').classList.remove('show');
+      
+      const correctPts = optionsUsed ? '+1' : '+2';
+      const wrongPts = optionsUsed ? '-1' : '0';
+      
+      // Update mobile action panel buttons
+      $('correctPtsBtn').textContent = correctPts;
+      $('wrongPtsBtn').textContent = wrongPts;
+      
+      $('teamsGrid').innerHTML = teams.map(t => `
+        <div class="team-card" data-id="${t.id}" onclick="selectTeam(${t.id})">
+          <div class="team-icon">${t.icon}</div>
+          <div class="team-name">${t.name}</div>
+          <div class="team-score">${t.score} pts</div>
+          <div class="team-hover">
+            <div class="hover-team-name">${t.icon} ${t.name}</div>
+            <button class="hover-btn correct" onclick="event.stopPropagation(); award(${t.id}, true)">✓ ${correctPts}</button>
+            <button class="hover-btn wrong" onclick="event.stopPropagation(); award(${t.id}, false)">✗ ${wrongPts}</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function selectTeam(teamId) {
+      selectedTeamId = teamId;
+      const team = teams.find(t => t.id === teamId);
+      
+      // Update selection UI
+      document.querySelectorAll('.team-card').forEach(c => c.classList.remove('selected'));
+      document.querySelector(`.team-card[data-id="${teamId}"]`).classList.add('selected');
+      
+      // Show mobile action panel
+      $('selectedTeamIcon').textContent = team.icon;
+      $('selectedTeamName').textContent = team.name;
+      $('mobileActionPanel').classList.add('show');
+      
+      // Scroll to action panel on mobile
+      if (isMobile()) {
+        setTimeout(() => {
+          $('mobileActionPanel').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 100);
+      }
+    }
+
+    function awardSelected(correct) {
+      if (selectedTeamId === null) return;
+      award(selectedTeamId, correct);
+    }
+
+    function award(teamId, correct) {
+      const team = teams.find(t => t.id === teamId);
+      const pts = correct ? (optionsUsed ? 1 : 2) : (optionsUsed ? -1 : 0);
+      team.score += pts;
+      
+      showToast(team.icon, team.name, pts);
+      
+      setTimeout(() => {
+        if (currentQ >= questions.length - 1) {
+          showScreen('winner');
+        } else {
+          currentQ++;
+          optionsShown = false;
+          optionsUsed = false;
+          selectedTeamId = null;
+          showScreen('question');
+        }
+      }, 1000);
+    }
+
+    function skip() {
+      if (currentQ >= questions.length - 1) {
+        showScreen('winner');
+      } else {
+        currentQ++;
+        optionsShown = false;
+        optionsUsed = false;
+        selectedTeamId = null;
+        showScreen('question');
+      }
+    }
+
+    function showToast(icon, name, pts) {
+      $('toastIcon').textContent = icon;
+      $('toastText').textContent = name;
+      const ptsEl = $('toastPts');
+      ptsEl.textContent = (pts > 0 ? '+' : '') + pts + ' pts';
+      ptsEl.className = 'toast-pts ' + (pts > 0 ? 'pos' : pts < 0 ? 'neg' : 'zero');
+      $('toast').classList.add('show');
+      setTimeout(() => $('toast').classList.remove('show'), 900);
+    }
+
+    function openModal() {
+      $('modalTeams').innerHTML = getSorted().map((t, i) => `
+        <div class="modal-team ${i === 0 ? 'top' : ''}">
+          <span class="modal-rank">${getRank(i)}</span>
+          <span class="modal-icon">${t.icon}</span>
+          <span class="modal-name">${t.name}</span>
+          <span class="modal-pts">${t.score}</span>
+        </div>
+      `).join('');
+      $('modalOverlay').classList.add('show');
+    }
+
+    function closeModal() {
+      $('modalOverlay').classList.remove('show');
+    }
+
+    // Confetti animation
+    function launchConfetti() {
+      const container = $('confettiContainer');
+      container.innerHTML = '';
+      
+      const colors = ['#FFD700', '#FFA500', '#FF6347', '#00CED1', '#9370DB', '#32CD32', '#FF69B4', '#00BFFF'];
+      const shapes = ['square', 'circle'];
+      
+      for (let i = 0; i < 150; i++) {
+        const confetti = document.createElement('div');
+        confetti.className = 'confetti';
+        
+        const color = colors[Math.floor(Math.random() * colors.length)];
+        const shape = shapes[Math.floor(Math.random() * shapes.length)];
+        const left = Math.random() * 100;
+        const delay = Math.random() * 3;
+        const duration = 3 + Math.random() * 3;
+        const size = 8 + Math.random() * 12;
+        
+        confetti.style.cssText = `
+          left: ${left}%;
+          width: ${size}px;
+          height: ${size}px;
+          background: ${color};
+          border-radius: ${shape === 'circle' ? '50%' : '2px'};
+          animation-delay: ${delay}s;
+          animation-duration: ${duration}s;
+        `;
+        
+        container.appendChild(confetti);
+        setTimeout(() => confetti.classList.add('active'), 10);
+      }
+      
+      setTimeout(() => launchConfetti(), 4000);
+      setTimeout(() => container.innerHTML = '', 12000);
+    }
+
+    function updateWinner() {
+      const sorted = getSorted();
+      const winner = sorted[0];
+      
+      $('winnerCard').style.background = winner.bg;
+      $('winIcon').textContent = winner.icon;
+      $('winName').textContent = winner.name;
+      $('winScore').textContent = winner.score + ' points';
+      
+      $('finalLeaderboard').innerHTML = sorted.map((t, i) => {
+        const cls = i === 0 ? 'gold' : i === 1 ? 'silver' : i === 2 ? 'bronze' : '';
+        return `
+          <div class="final-row ${cls}">
+            <span class="final-rank">${getRank(i)}</span>
+            <span class="final-icon">${t.icon}</span>
+            <span class="final-name">${t.name}</span>
+            <span class="final-score">${t.score} pts</span>
+          </div>
+        `;
+      }).join('');
+      
+      launchConfetti();
+    }
+
+    function restart() {
+      $('confettiContainer').innerHTML = '';
+      teams.forEach(t => t.score = 0);
+      currentQ = 0;
+      optionsShown = false;
+      optionsUsed = false;
+      selectedTeamId = null;
+      showScreen('intro');
+    }
+  </script>
+</body>
+</html>
