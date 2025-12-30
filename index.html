@@ -1163,20 +1163,6 @@
         <span class="title-quest">QUEST</span>
       </h1>
       <p class="tagline">The Ultimate Knowledge Challenge</p>
-      <div class="stats-row">
-        <div class="stat-card glass-card">
-          <div class="stat-value">21</div>
-          <div class="stat-label">Questions</div>
-        </div>
-        <div class="stat-card glass-card">
-          <div class="stat-value">7</div>
-          <div class="stat-label">Teams</div>
-        </div>
-        <div class="stat-card glass-card">
-          <div class="stat-value">∞</div>
-          <div class="stat-label">Glory</div>
-        </div>
-      </div>
       <button class="btn btn-gold" onclick="startGame()">Begin Challenge →</button>
     </div>
   </div>
@@ -1372,7 +1358,7 @@
         `).join('');
         grid.style.display = 'grid';
         $('optBtn').textContent = '🙈 Hide Options';
-        $('optHint').textContent = '(+2/0 without)';
+        $('optHint').textContent = '(+2/-1 without)';
       } else {
         grid.style.display = 'none';
         $('optBtn').textContent = '👁️ Show Options';
@@ -1391,7 +1377,7 @@
       $('mobileActionPanel').classList.remove('show');
       
       const correctPts = optionsUsed ? '+1' : '+2';
-      const wrongPts = optionsUsed ? '-1' : '0';
+      const wrongPts = '-1';
       
       // Update mobile action panel buttons
       $('correctPtsBtn').textContent = correctPts;
@@ -1439,7 +1425,7 @@
 
     function award(teamId, correct) {
       const team = teams.find(t => t.id === teamId);
-      const pts = correct ? (optionsUsed ? 1 : 2) : (optionsUsed ? -1 : 0);
+      const pts = correct ? (optionsUsed ? 1 : 2) : -1;
       team.score += pts;
       
       showToast(team.icon, team.name, pts);
