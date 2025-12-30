@@ -1162,7 +1162,7 @@
         <span class="title-ai">AI</span>
         <span class="title-quest">QUEST</span>
       </h1>
-      <p class="tagline">The Ultimate Knowledge Challenge</p>
+       <!--<p class="tagline">The Ultimate Knowledge Challenge</p> -->
       <button class="btn btn-gold" onclick="startGame()">Begin Challenge →</button>
     </div>
   </div>
@@ -1192,6 +1192,7 @@
     <div class="options-grid" id="optionsGrid" style="display:none;"></div>
     
     <div class="actions-row">
+      <button class="btn btn-secondary" id="backBtn" onclick="goPrevious()" style="display:none;">← Back</button>
       <button class="btn btn-secondary btn-options" onclick="toggleOptions()">
         <span id="optBtn">👁️ Show Options</span>
         <span class="btn-hint" id="optHint">(reduces to +1/-1)</span>
@@ -1341,6 +1342,9 @@
       $('optBtn').textContent = '👁️ Show Options';
       $('optHint').textContent = '(reduces to +1/-1)';
       optionsShown = false;
+      
+      // Show back button only if not on first question
+      $('backBtn').style.display = currentQ > 0 ? 'inline-block' : 'none';
     }
 
     function toggleOptions() {
@@ -1363,6 +1367,15 @@
         grid.style.display = 'none';
         $('optBtn').textContent = '👁️ Show Options';
         $('optHint').textContent = '(reduces to +1/-1)';
+      }
+    }
+
+    function goPrevious() {
+      if (currentQ > 0) {
+        currentQ--;
+        optionsShown = false;
+        optionsUsed = false;
+        showScreen('question');
       }
     }
 
